@@ -1,20 +1,19 @@
 // Обгортка над Firebase (Auth + Firestore) для синхронізації даних
-// між Mac-застосунком та iPhone PWA. Використовує "compat" SDK,
-// тож підключається простими <script> тегами, без збірника.
+// між Mac-застосунком та iPhone PWA. Той самий Firebase-проєкт, що й
+// у "Навантаженні", але окрема колекція Firestore ("personalhub"),
+// щоб дані двох застосунків не перетиналися.
 
 (function () {
     const firebaseApp = firebase.initializeApp(window.FIREBASE_CONFIG);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Офлайн-кеш у браузері (IndexedDB), щоб додаток працював без інтернету
-    // і показував останні відомі дані, а після повернення мережі — синхронізував.
     db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
         console.warn('Firestore persistence не увімкнено:', err.code);
     });
 
     function docRef(uid) {
-        return db.collection('planners').doc(uid);
+        return db.collection('personalhub').doc(uid);
     }
 
     window.PlannerSync = {
@@ -30,12 +29,14 @@
             return auth.signOut();
         },
 
+        resetPassword(email) {
+            return auth.sendPasswordResetEmail(email);
+        },
+
         currentUser() {
             return auth.currentUser;
         },
 
-        // Підписка на дані користувача в реальному часі.
-        // callback отримує {calendarEvents, subjectNotes, checklistTasks, settings} або null, якщо документа ще нема.
         watchData(uid, callback) {
             return docRef(uid).onSnapshot(
                 { includeMetadataChanges: true },

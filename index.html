@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
-    <title>Навантаження | Білий Б.В.</title>
+    <title>Мій Хаб</title>
 
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#f5f5f7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Навантаження">
+    <meta name="apple-mobile-web-app-title" content="Мій Хаб">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png">
     <link rel="apple-touch-icon" sizes="152x152" href="assets/app-icon-152.png">
     <link rel="apple-touch-icon" sizes="167x167" href="assets/app-icon-167.png">
@@ -32,6 +32,7 @@
             --apple-green: #34c759;
             --apple-red: #ff3b30;
             --apple-orange: #ff9500;
+            --apple-purple: #af52de;
             --border-color: #d2d2d7;
             --shadow: 0 4px 24px rgba(0,0,0,0.04);
             --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -47,6 +48,14 @@
             overscroll-behavior-y: contain;
         }
 
+        .app-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--apple-blue), var(--apple-purple));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .app-icon.small { width: 28px; height: 28px; border-radius: 8px; font-size: 12px; }
+
         .apple-nav {
             position: sticky; top: 0; left: 0; width: 100%;
             padding-top: env(safe-area-inset-top);
@@ -57,10 +66,9 @@
             z-index: 1000;
         }
         .apple-nav-inner { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
-        .nav-logo-group { display: flex; align-items: center; gap: 12px; flex: 1 1 auto; min-width: 0; overflow: hidden; }
-        .nav-logo { height: 26px; width: auto; max-width: 100%; object-fit: contain; display: block; }
+        .nav-logo-group { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+        .nav-title { font-size: 15px; font-weight: 600; }
         .nav-progress { font-size: 13px; font-weight: 500; color: var(--text-sec); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-        .progress-pill { background-color: var(--apple-blue); color: white; padding: 2px 10px; border-radius: 980px; font-weight: 600; font-size: 13px; }
         .nav-icon-btn {
             background: transparent; border: none; color: var(--text-sec); font-size: 18px; cursor: pointer;
             width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -73,19 +81,26 @@
 
         .container-main { max-width: 720px; margin: 0 auto; padding: 20px 16px calc(60px + env(safe-area-inset-bottom)); }
 
-        .hero-title { font-size: 30px; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 2px; }
-        .hero-subtitle { font-size: 16px; font-weight: 400; color: var(--text-sec); margin-bottom: 24px; }
+        .hero-title { font-size: 28px; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 2px; }
+        .hero-subtitle { font-size: 15px; font-weight: 400; color: var(--text-sec); margin-bottom: 18px; }
+
+        .tab-bar { display: flex; background: #e8e8ed; border-radius: 12px; padding: 3px; margin-bottom: 20px; gap: 2px; }
+        .tab-btn { flex: 1; border: none; background: transparent; padding: 9px 8px; border-radius: 9px; font-size: 14px; font-weight: 600; color: var(--text-sec); }
+        .tab-btn.active { background: #fff; color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
 
         .apple-card { background-color: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
 
-        .reminders-title { font-size: 19px; font-weight: 600; margin-top: 0; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .reminders-title { font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
         .reminders-count { font-size: 13px; color: var(--text-sec); font-weight: 500; }
 
         .reminder-input-group { display: flex; gap: 10px; margin-bottom: 14px; }
         .apple-input, .apple-select {
-            flex-grow: 1; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px;
+            border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px;
             font-size: 16px; font-family: var(--font-family); background-color: #fafafa; color: var(--text-main); width: 100%;
         }
+        .apple-input { flex-grow: 1; }
         .apple-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2386868b'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 32px; }
         .apple-input:focus, .apple-select:focus { outline: none; border-color: var(--apple-blue); background-color: #fff; box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1); }
 
@@ -96,7 +111,7 @@
         }
         .apple-btn-icon:active { background-color: var(--apple-blue); color: white; }
 
-        .reminder-list { max-height: 340px; overflow-y: auto; }
+        .reminder-list { max-height: 400px; overflow-y: auto; }
         .reminder-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 0.5px solid var(--border-color); }
         .reminder-item:last-child { border-bottom: none; }
         .reminder-empty { color: var(--text-sec); font-size: 14px; text-align: center; padding: 20px 0; }
@@ -111,49 +126,51 @@
         }
         .reminder-text { font-size: 15px; flex-grow: 1; word-break: break-word; }
         .reminder-text.done { color: var(--text-sec); text-decoration: line-through; }
+        .reminder-meta { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
         .btn-delete { color: var(--text-sec); cursor: pointer; font-size: 13px; font-weight: 500; opacity: 0.6; margin-left: 8px; flex-shrink: 0; }
 
-        #calendar-section { padding: 16px; }
-        .fc { font-family: var(--font-family); font-size: 13px; }
-        .fc-toolbar-title { font-size: 17px !important; font-weight: 600 !important; }
-        .fc-button { border-radius: 8px !important; font-weight: 500 !important; box-shadow: none !important; border: none !important; padding: 6px 10px !important; }
+        #calendar-section { padding: 14px; }
+        .fc { font-family: var(--font-family); font-size: 12px; }
+        .fc-toolbar-title { font-size: 16px !important; font-weight: 600 !important; }
+        .fc-button { border-radius: 8px !important; font-weight: 500 !important; box-shadow: none !important; border: none !important; padding: 5px 8px !important; }
         .fc-button-primary { background-color: #f5f5f7 !important; color: var(--apple-blue) !important; }
         .fc-button-active { background-color: var(--apple-blue) !important; color: white !important; }
         .fc-day-today { background-color: rgba(0, 113, 227, 0.05) !important; }
         .fc-event { border-radius: 100px !important; padding: 2px 6px !important; border: none !important; font-size: 10px !important; font-weight: 600 !important; }
-        .fc-event-lecture { background-color: #e8f2fc !important; color: var(--apple-blue) !important; }
-        .fc-event-practical { background-color: #eaf8ed !important; color: var(--apple-green) !important; }
-        .fc-event-default { background-color: #f5f5f7 !important; color: var(--text-main) !important; }
+        .fc-event-task { background-color: #e8f2fc !important; color: var(--apple-blue) !important; }
+        .fc-event-task-done { background-color: #f5f5f7 !important; color: var(--text-sec) !important; }
 
-        .add-event-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-        .add-event-grid > * { grid-column: span 1; }
-        .add-event-grid .apple-btn-solid { grid-column: span 2; }
+        .add-task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .add-tx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 
         .apple-btn-solid {
             background-color: var(--apple-blue); color: white; border: none; border-radius: 12px;
-            padding: 12px 20px; font-weight: 600; font-size: 15px; cursor: pointer;
+            padding: 12px 20px; font-weight: 600; font-size: 15px; cursor: pointer; width: 100%;
         }
         .apple-btn-solid:active { background-color: #005cbf; }
 
-        .section-header { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 16px; }
-        .subjects-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
-        .subject-card { padding: 20px; border-radius: 20px; }
-        .subject-title { font-size: 17px; font-weight: 600; margin: 0 0 4px 0; }
-        .subject-subtitle { font-size: 13px; color: var(--text-sec); font-weight: 500; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
-        .badge-apple { background-color: #f5f5f7; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--text-main); }
+        .section-header { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 14px; }
 
-        .progress-wrap { margin-bottom: 14px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-        .progress-track { background-color: #e5e5ea; border-radius: 980px; height: 6px; overflow: hidden; }
-        .progress-fill { background-color: var(--apple-blue); height: 100%; border-radius: 980px; }
-        .progress-fill.prac { background-color: var(--apple-green); }
-        .progress-fill.over { background-color: var(--apple-orange); }
+        .tx-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 0.5px solid var(--border-color); gap: 10px; }
+        .tx-item:last-child { border-bottom: none; }
+        .tx-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .tx-main { flex-grow: 1; min-width: 0; }
+        .tx-category { font-size: 15px; font-weight: 500; }
+        .tx-note { font-size: 12px; color: var(--text-sec); }
+        .tx-amount { font-size: 14px; font-weight: 600; white-space: nowrap; }
+        .tx-amount.income { color: var(--apple-green); }
 
-        .apple-pill-btn {
-            background-color: #f5f5f7; color: var(--apple-blue); border: none; padding: 12px 16px;
-            border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 6px;
-        }
-        .apple-pill-btn.has-notes { background-color: #e8f2fc; }
+        .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .summary-tile { background: #f5f5f7; border-radius: 14px; padding: 12px; }
+        .summary-tile-label { font-size: 10px; color: var(--text-sec); font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+        .summary-tile-value { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+        .summary-tile-value.income { color: var(--apple-green); }
+        .summary-tile-value.expense { color: var(--apple-red); }
+
+        .cat-bar-row { margin-bottom: 12px; }
+        .cat-bar-head { display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; margin-bottom: 5px; }
+        .cat-bar-track { background: #e5e5ea; border-radius: 980px; height: 7px; overflow: hidden; }
+        .cat-bar-fill { height: 100%; border-radius: 980px; }
 
         .modal-content { border-radius: 22px; border: none; }
         .modal-header { border-bottom: 0.5px solid var(--border-color); padding: 20px 24px; }
@@ -162,7 +179,7 @@
         .modal-footer { border-top: 0.5px solid var(--border-color); padding: 16px 24px; background-color: #fff; }
         .field-label { font-size: 12px; font-weight: 600; color: var(--text-sec); margin-bottom: 6px; display: block; }
 
-        .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 0.5px solid var(--border-color); }
+        .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 0.5px solid var(--border-color); gap: 12px; }
         .settings-row:last-child { border-bottom: none; }
         .apple-switch { position: relative; width: 46px; height: 28px; flex-shrink: 0; }
         .apple-switch input { opacity: 0; width: 0; height: 0; }
@@ -170,6 +187,12 @@
         .apple-switch-slider::before { content: ''; position: absolute; width: 24px; height: 24px; left: 2px; top: 2px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
         .apple-switch input:checked + .apple-switch-slider { background-color: var(--apple-green); }
         .apple-switch input:checked + .apple-switch-slider::before { transform: translateX(18px); }
+        .rate-input { width: 90px; text-align: right; }
+
+        .apple-pill-btn {
+            background-color: #f5f5f7; color: var(--apple-blue); border: none; padding: 12px 16px;
+            border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer;
+        }
 
         /* Екран входу */
         #loginScreen {
@@ -179,7 +202,6 @@
         }
         #loginScreen.hidden { display: none; }
         .login-card { width: 100%; max-width: 360px; text-align: center; }
-        .login-logo { height: 40px; margin-bottom: 24px; }
         .login-error { color: var(--apple-red); font-size: 13px; margin-top: 10px; min-height: 18px; }
         #appRoot.hidden { display: none; }
     </style>
@@ -188,16 +210,19 @@
 
     <div id="loginScreen">
         <div class="login-card">
-            <img src="assets/knuba-logo.png" alt="КНУБА" class="login-logo">
-            <h1 class="hero-title" style="font-size:22px;">Навантаження</h1>
-            <p class="hero-subtitle" style="margin-bottom:20px;">Вхід у твій кабінет</p>
+            <div class="app-icon" style="margin: 0 auto 20px;">МХ</div>
+            <h1 class="hero-title" style="font-size:22px;">Мій Хаб</h1>
+            <p class="hero-subtitle" style="margin-bottom:20px;">Завдання та фінанси в одному місці</p>
             <div class="apple-card" style="text-align:left;">
                 <label class="field-label">EMAIL</label>
                 <input type="email" id="loginEmail" class="apple-input mb-3" placeholder="you@example.com" autocomplete="username">
                 <label class="field-label">ПАРОЛЬ</label>
                 <input type="password" id="loginPassword" class="apple-input mb-3" placeholder="••••••••" autocomplete="current-password">
-                <button class="apple-btn-solid w-100" id="loginBtn" onclick="doLogin()">Увійти</button>
+                <button class="apple-btn-solid" id="loginBtn" onclick="doLogin()">Увійти</button>
                 <div class="login-error" id="loginError"></div>
+                <div style="text-align:center; margin-top:12px;">
+                    <a href="#" id="forgotPasswordLink" onclick="doResetPassword(); return false;" style="font-size:13px; color: var(--apple-blue, #007aff);">Забув(ла) пароль?</a>
+                </div>
             </div>
         </div>
     </div>
@@ -206,74 +231,110 @@
         <nav class="apple-nav">
             <div class="apple-nav-inner">
                 <div class="nav-logo-group">
-                    <img src="assets/knuba-logo.png" alt="КНУБА" class="nav-logo">
+                    <div class="app-icon small">МХ</div>
+                    <span class="nav-title">Мій Хаб</span>
                 </div>
                 <div class="nav-progress">
                     <span class="save-indicator" id="saveIndicator">Збережено</span>
                     <span class="sync-dot" id="syncDot" title="Онлайн"></span>
-                    <span class="progress-pill" id="totalProgress">0%</span>
-                    <button class="nav-icon-btn" id="settingsBtn">⚙︎</button>
+                    <button class="nav-icon-btn" onclick="openSettingsModal()">⚙︎</button>
                 </div>
             </div>
         </nav>
 
         <div class="container-main">
 
-            <h1 class="hero-title">Доцент Білий Б.В.</h1>
-            <div class="hero-subtitle">Навантаження на осінній семестр 2026. КНУБА.</div>
+            <h1 class="hero-title">Мій Хаб</h1>
+            <div class="hero-subtitle">Завдання та фінанси в одному місці</div>
 
-            <div class="apple-card" id="calendar-section">
-                <div class="add-event-grid">
-                    <select id="eventTypeInput" class="apple-select">
-                        <option value="Лекція">Лекція</option>
-                        <option value="Практична">Практична</option>
-                        <option value="Інше">Інша подія</option>
-                    </select>
-                    <select id="eventSubjectInput" class="apple-select"></select>
-                    <input type="text" id="eventTitleInput" class="apple-input add-event-title-input" style="display:none;" placeholder="Назва події">
-                    <input type="date" id="eventDateInput" class="apple-input">
-                    <input type="time" id="eventTimeInput" class="apple-input" value="10:00">
-                    <button class="apple-btn-solid" onclick="addEventFromForm()">Додати</button>
-                </div>
-                <div id='calendar'></div>
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="overview" onclick="switchTab('overview')">Огляд</button>
+                <button class="tab-btn" data-tab="tasks" onclick="switchTab('tasks')">Завдання</button>
+                <button class="tab-btn" data-tab="finance" onclick="switchTab('finance')">Фінанси</button>
             </div>
 
-            <div class="apple-card">
-                <h2 class="reminders-title">
-                    <span>Мої завдання</span>
-                    <span class="reminders-count" id="checklistCount"></span>
-                </h2>
-                <div class="reminder-input-group">
-                    <input type="text" id="checklistInput" class="apple-input" placeholder="Нове нагадування...">
-                    <button class="apple-btn-icon" onclick="addChecklistItem()">+</button>
+            <!-- ОГЛЯД -->
+            <div class="tab-panel active" id="panel-overview">
+                <div class="apple-card">
+                    <h2 class="reminders-title">
+                        <span>Найближчі завдання</span>
+                        <span class="reminders-count" id="overviewTasksCount"></span>
+                    </h2>
+                    <div class="reminder-list" id="overviewTaskList"></div>
                 </div>
-                <div class="reminder-list" id="checklistItems"></div>
-            </div>
-
-            <h2 class="section-header">Дисципліни та Групи</h2>
-            <div class="subjects-grid" id="dashboardGrid"></div>
-
-        </div>
-    </div>
-
-    <div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-bottom-0 pb-0">
-                    <h2 class="modal-title" id="modalTitle">Група</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
-                </div>
-                <div class="modal-body">
-                    <label class="field-label">ПОСИЛАННЯ НА МАТЕРІАЛИ (GOOGLE DRIVE)</label>
-                    <input type="text" id="modalLink" class="apple-input w-100 mb-4" placeholder="Вставте URL...">
-                    <label class="field-label">НОТАТКИ ТА СПИСОК СТУДЕНТІВ</label>
-                    <textarea id="modalNotes" class="apple-input w-100" style="height: 180px; resize: vertical;" placeholder="1. Іваненко І.&#10;Староста: ..."></textarea>
-                </div>
-                <div class="modal-footer border-top-0 pt-0">
-                    <button type="button" class="apple-pill-btn" style="width: auto; background: transparent; color: var(--text-sec);" data-bs-dismiss="modal">Скасувати</button>
-                    <button type="button" class="apple-btn-solid" onclick="saveModalChanges()">Готово</button>
+                <div class="apple-card">
+                    <h2 class="reminders-title"><span>Цей місяць</span></h2>
+                    <div class="summary-grid" id="overviewSummaryGrid"></div>
+                    <div id="overviewCatBars"></div>
                 </div>
             </div>
+
+            <!-- ЗАВДАННЯ -->
+            <div class="tab-panel" id="panel-tasks">
+                <div class="apple-card" id="calendar-section">
+                    <div id="taskCalendar"></div>
+                </div>
+                <div class="apple-card">
+                    <h2 class="reminders-title">
+                        <span>Усі завдання</span>
+                        <span class="reminders-count" id="taskListCount"></span>
+                    </h2>
+                    <div class="reminder-input-group">
+                        <input type="text" id="taskTitleInput" class="apple-input" placeholder="Нове завдання...">
+                    </div>
+                    <div class="add-task-grid">
+                        <input type="date" id="taskDateInput" class="apple-input">
+                        <input type="time" id="taskTimeInput" class="apple-input">
+                    </div>
+                    <div class="add-task-grid">
+                        <select id="taskReminderInput" class="apple-select">
+                            <option value="">За замовч.</option>
+                            <option value="5">5 хв</option>
+                            <option value="15">15 хв</option>
+                            <option value="30">30 хв</option>
+                            <option value="60">60 хв</option>
+                            <option value="1440">1 день</option>
+                        </select>
+                        <button class="apple-btn-solid" onclick="addTask()">Додати</button>
+                    </div>
+                    <div class="reminder-list" id="taskList"></div>
+                </div>
+            </div>
+
+            <!-- ФІНАНСИ -->
+            <div class="tab-panel" id="panel-finance">
+                <div class="apple-card">
+                    <h2 class="section-header">Підсумок місяця</h2>
+                    <div class="summary-grid" id="financeSummaryGrid"></div>
+                    <div id="financeCatBars"></div>
+                </div>
+
+                <div class="apple-card">
+                    <h2 class="section-header">Нова операція</h2>
+                    <div class="add-tx-grid">
+                        <select id="txTypeInput" class="apple-select">
+                            <option value="expense">Витрата</option>
+                            <option value="income">Дохід</option>
+                        </select>
+                        <input type="number" id="txAmountInput" class="apple-input" placeholder="Сума" step="0.01" min="0">
+                    </div>
+                    <div class="add-tx-grid">
+                        <select id="txCurrencyInput" class="apple-select">
+                            <option value="UAH">UAH</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                        </select>
+                        <select id="txCategoryInput" class="apple-select"></select>
+                    </div>
+                    <div class="reminder-input-group">
+                        <input type="text" id="txNoteInput" class="apple-input" placeholder="Нотатка (необов'язково)">
+                    </div>
+                    <button class="apple-btn-solid" onclick="addTransaction()">Додати операцію</button>
+                    <h2 class="reminders-title" style="margin-top:20px;"><span>Операції</span><span class="reminders-count" id="txListCount"></span></h2>
+                    <div class="reminder-list" id="txList"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -286,7 +347,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="settings-row">
-                        <span>Нагадування про пари</span>
+                        <span>Нагадування</span>
                         <label class="apple-switch">
                             <input type="checkbox" id="remindersEnabledInput">
                             <span class="apple-switch-slider"></span>
@@ -296,19 +357,27 @@
                         <span>За скільки хвилин</span>
                         <select id="reminderMinutesInput" class="apple-select" style="max-width: 130px;">
                             <option value="5">5 хв</option>
-                            <option value="10">10 хв</option>
                             <option value="15">15 хв</option>
                             <option value="30">30 хв</option>
                             <option value="60">60 хв</option>
+                            <option value="1440">1 день</option>
                         </select>
+                    </div>
+                    <div class="settings-row">
+                        <span>Курс USD → UAH</span>
+                        <input type="number" id="rateUsdInput" class="apple-input rate-input" step="0.01" min="0">
+                    </div>
+                    <div class="settings-row">
+                        <span>Курс EUR → UAH</span>
+                        <input type="number" id="rateEurInput" class="apple-input rate-input" step="0.01" min="0">
                     </div>
                     <div class="settings-row">
                         <span id="loggedInAs" style="color:var(--text-sec); font-size:13px;"></span>
                     </div>
                 </div>
                 <div class="modal-footer border-top-0 pt-0" style="display:flex; justify-content: space-between;">
-                    <button type="button" class="apple-pill-btn" style="width:auto; background:transparent; color:var(--apple-red);" onclick="doLogout()">Вийти</button>
-                    <button type="button" class="apple-btn-solid" onclick="saveSettings()">Готово</button>
+                    <button type="button" class="apple-pill-btn" style="color:var(--apple-red);" onclick="doLogout()">Вийти</button>
+                    <button type="button" class="apple-btn-solid" style="width:auto;" onclick="saveSettingsFromModal()">Готово</button>
                 </div>
             </div>
         </div>
