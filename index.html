@@ -125,9 +125,13 @@
         .fc-event-practical { background-color: #eaf8ed !important; color: var(--apple-green) !important; }
         .fc-event-default { background-color: #f5f5f7 !important; color: var(--text-main) !important; }
 
-        .add-event-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .add-event-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; align-items: center; }
         .add-event-grid > * { grid-column: span 1; }
         .add-event-grid .apple-btn-solid { grid-column: span 2; }
+        .add-event-grid input[type="date"], .add-event-grid input[type="time"] {
+            min-width: 0; height: 44px; padding: 0 12px; cursor: pointer;
+        }
+        .fc-daygrid-day:hover { background-color: #f5f5f7; cursor: pointer; }
 
         .apple-btn-solid {
             background-color: var(--apple-blue); color: white; border: none; border-radius: 12px;
@@ -256,6 +260,34 @@
             <h2 class="section-header">Дисципліни та Групи</h2>
             <div class="subjects-grid" id="dashboardGrid"></div>
 
+        </div>
+    </div>
+
+    <div class="modal fade" id="addEventModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h2 class="modal-title" id="addEventModalDate">Додати подію</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="field-label">ТИП ПОДІЇ</label>
+                    <select id="modalEventTypeInput" class="apple-select w-100 mb-3">
+                        <option value="Лекція">Лекція</option>
+                        <option value="Практична">Практична</option>
+                        <option value="Інше">Інша подія</option>
+                    </select>
+                    <label class="field-label">ДИСЦИПЛІНА</label>
+                    <select id="modalEventSubjectInput" class="apple-select w-100 mb-3"></select>
+                    <input type="text" id="modalEventTitleInput" class="apple-input w-100 mb-3" placeholder="Назва події" style="display:none;">
+                    <label class="field-label">ЧАС</label>
+                    <input type="time" id="modalEventTimeInput" class="apple-input w-100" value="10:00" style="height:44px;">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="apple-pill-btn" style="width: auto; background: transparent; color: var(--text-sec);" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="button" class="apple-btn-solid" onclick="saveModalEvent()">Додати</button>
+                </div>
+            </div>
         </div>
     </div>
 

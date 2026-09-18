@@ -203,7 +203,8 @@ function renderDashboard() {
 }
 
 // --- 6. НОТАТКИ ГРУП ---
-let notesModal, settingsModal;
+let notesModal, settingsModal, addEventModal;
+let modalEventDateStr = null;
 
 function openNotesModal(subjectId) {
     currentEditNoteId = subjectId;
@@ -245,8 +246,8 @@ function saveSettings() {
 }
 
 // --- 8. КАЛЕНДАР ---
-function populateSubjectSelect() {
-    const select = document.getElementById('eventSubjectInput');
+function fillSubjectSelect(select) {
+    if (!select) return;
     select.innerHTML = '';
     subjectsConfig.forEach(subject => {
         const opt = document.createElement('option');
@@ -254,6 +255,11 @@ function populateSubjectSelect() {
         opt.textContent = `${subject.subj} — ${subject.group}`;
         select.appendChild(opt);
     });
+}
+
+function populateSubjectSelect() {
+    fillSubjectSelect(document.getElementById('eventSubjectInput'));
+    fillSubjectSelect(document.getElementById('modalEventSubjectInput'));
 }
 
 function updateAddEventFormMode() {
@@ -293,7 +299,10 @@ function initCalendarOnce() {
                 saveEventsFromCalendar();
             }
         },
-        eventDrop: function () { saveEventsFromCalendar(); }
+        eventDrop: function () { saveEventsFromCalendar(); },
+        dateClick: function (info) {
+            openAddEventModal(info.dateStr);
+        }
     });
     calendar.render();
     refreshCalendarEvents();
@@ -315,30 +324,68 @@ function saveEventsFromCalendar() {
     renderDashboard();
 }
 
+function createEventFromFields(type, dateStr, timeStr, subjectId, customTitle) {
+    if (!dateStr) { alert('Вкажіть дату.'); return false; }
+    let title;
+    if (type === 'Інше') {
+        title = (customTitle || '').trim();
+        if (!title) { alert('Вкажіть назву події.'); return false; }
+    } else {
+        const subject = subjectsConfig.find(s => s.id === subjectId);
+        if (!subject) { alert('Оберіть дисципліну.'); return false; }
+        title = `${type} ${subject.id} (${subject.subj}, ${subject.group})`;
+    }
+    const className = classifyTitle(title);
+    const newEventObj = { title: title, start: `${dateStr}T${timeStr}:00`, className: className };
+    calendar.addEvent(newEventObj);
+    calendarEvents.push(newEventObj);
+    persist();
+    renderDashboard();
+    return true;
+}
+
 function addEventFromForm() {
     const type = document.getElementById('eventTypeInput').value;
     const date = document.getElementById('eventDateInput').value;
     const time = document.getElementById('eventTimeInput').value;
+    const subjectId = document.getElementById('eventSubjectInput').value;
+    const customTitle = document.getElementById('eventTitleInput').value;
+    const ok = createEventFromFields(type, date, time, subjectId, customTitle);
+    if (ok) { document.getElementById('eventTitleInput').value = ''; }
+}
 
-    if (!date) { alert('Вкажіть дату.'); return; }
-
-    let title;
+function updateModalEventFormMode() {
+    const type = document.getElementById('modalEventTypeInput').value;
+    const subjectSelect = document.getElementById('modalEventSubjectInput');
+    const titleInput = document.getElementById('modalEventTitleInput');
     if (type === 'Інше') {
-        title = document.getElementById('eventTitleInput').value.trim();
-        if (!title) { alert('Вкажіть назву події.'); return; }
+        subjectSelect.style.display = 'none';
+        titleInput.style.display = 'block';
     } else {
-        const subjectId = document.getElementById('eventSubjectInput').value;
-        const subject = subjectsConfig.find(s => s.id === subjectId);
-        if (!subject) { alert('Оберіть дисципліну.'); return; }
-        title = `${type} ${subject.id} (${subject.subj}, ${subject.group})`;
+        subjectSelect.style.display = 'block';
+        titleInput.style.display = 'none';
     }
+}
 
-    const className = classifyTitle(title);
-    calendar.addEvent({ title: title, start: `${date}T${time}:00`, className: className });
-    calendarEvents.push({ title: title, start: `${date}T${time}:00`, className: className });
-    persist();
-    document.getElementById('eventTitleInput').value = '';
-    renderDashboard();
+function openAddEventModal(dateStr) {
+    modalEventDateStr = dateStr;
+    const dateObj = new Date(dateStr + 'T00:00:00');
+    const formatted = dateObj.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('addEventModalDate').innerText = 'Додати подію — ' + formatted;
+    document.getElementById('modalEventTypeInput').value = 'Лекція';
+    document.getElementById('modalEventTitleInput').value = '';
+    document.getElementById('modalEventTimeInput').value = '10:00';
+    updateModalEventFormMode();
+    addEventModal.show();
+}
+
+function saveModalEvent() {
+    const type = document.getElementById('modalEventTypeInput').value;
+    const time = document.getElementById('modalEventTimeInput').value || '10:00';
+    const subjectId = document.getElementById('modalEventSubjectInput').value;
+    const customTitle = document.getElementById('modalEventTitleInput').value;
+    const ok = createEventFromFields(type, modalEventDateStr, time, subjectId, customTitle);
+    if (ok) { addEventModal.hide(); }
 }
 
 // --- 9. ЧЕКЛІСТ ---
@@ -417,7 +464,9 @@ setInterval(checkReminders, 30000);
 window.addEventListener('DOMContentLoaded', () => {
     notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
     settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
+    addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
     document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+    document.getElementById('modalEventTypeInput').addEventListener('change', updateModalEventFormMode);
     document.getElementById('checklistInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') addChecklistItem();
     });
