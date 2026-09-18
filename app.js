@@ -1,21 +1,17 @@
 // --- 1. БАЗА ДИСЦИПЛІН (та сама, що й у Mac-застосунку) ---
 const subjectsConfig = [
-    // --- I семестр, денна ---
+    // --- I семестр, денна (редакція вересень 2026) ---
     { id: 'inf_1', subj: "Інформаційне право", group: "БМП-25 (Денна)", lecTotal: 8, pracTotal: 8, term: "—" },
-    { id: 'mzpl_d1', subj: "Міжнародний захист прав людини", group: "БМП-23 (Денна)", lecTotal: 38, pracTotal: 38, term: "Екзамен" },
     { id: 'mpbd_d1', subj: "Міжнародно-правове регулювання будівельної діяльності", group: "БМПм-25-01 (Денна)", lecTotal: 6, pracTotal: 6, term: "Залік" },
     { id: 'peu_1', subj: "Право Європейського Союзу у контексті євроінтеграції України", group: "БМП-23 (Денна)", lecTotal: 30, pracTotal: 30, term: "Залік" },
-    { id: 'psu_d1', subj: "Правова система України в контексті глобалізації та євроінтеграції", group: "БМПм-25-01 (Денна)", lecTotal: 6, pracTotal: 6, term: "—" },
     // --- I семестр, заочна: настановчі лекції (2 год., без практичних) ---
     { id: 'ust_popd1', subj: "(Уст.) Правові основи проф. діяльності", group: "зФВС-22 (Заочна)", lecTotal: 2, pracTotal: 0, term: "Настановча" },
     { id: 'ust_mgp1', subj: "(Уст.) Міжнародне гуманітарне право", group: "зБМПм-26 (Заочна)", lecTotal: 2, pracTotal: 0, term: "Настановча" },
     { id: 'ust_pp1', subj: "(Уст.) Порівняльне правознавство", group: "зБМП-25 (Заочна)", lecTotal: 2, pracTotal: 0, term: "Настановча" },
-    { id: 'ust_mzpl1', subj: "(Уст.) Міжнародний захист прав людини", group: "зБМП-23, зБМПс-24 (Заочна)", lecTotal: 2, pracTotal: 0, term: "Настановча" },
     { id: 'ust_popd2', subj: "(Уст.) Правові основи проф. діяльності", group: "зФВС-23 (Заочна)", lecTotal: 2, pracTotal: 0, term: "Настановча" },
     // --- I семестр, заочна: повний курс ---
     { id: 'inf_2', subj: "Інформаційне право", group: "зБМП-25 (Заочна)", lecTotal: 4, pracTotal: 8, term: "Екзамен" },
-    { id: 'mpbd_z1', subj: "Міжнародно-правове регулювання будівельної діяльності", group: "зБМПм-25 (Заочна)", lecTotal: 2, pracTotal: 4, term: "Залік" },
-    { id: 'psu_z1', subj: "Правова система України в контексті глобалізації та євроінтеграції", group: "зБМПм-25 (Заочна)", lecTotal: 2, pracTotal: 4, term: "—" }
+    { id: 'mpbd_z1', subj: "Міжнародно-правове регулювання будівельної діяльності", group: "зБМПм-25 (Заочна)", lecTotal: 2, pracTotal: 4, term: "Залік" }
 ];
 
 let calendarEvents = [];
@@ -53,6 +49,29 @@ async function doLogin() {
 
 function doLogout() {
     window.PlannerSync.signOut();
+}
+
+async function doResetPassword() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const errEl = document.getElementById('loginError');
+    if (!email) {
+        errEl.style.color = '';
+        errEl.innerText = 'Спочатку введи свій email у полі вище, потім натисни "Забув(ла) пароль?" ще раз.';
+        return;
+    }
+    errEl.style.color = '';
+    errEl.innerText = 'Надсилаю лист...';
+    try {
+        await window.PlannerSync.resetPassword(email);
+        errEl.style.color = '#34c759';
+        errEl.innerText = 'Лист для відновлення паролю надіслано на ' + email + '. Перевір пошту (і папку "Спам"), перейди за посиланням і встанови новий пароль.';
+    } catch (e) {
+        errEl.style.color = '';
+        errEl.innerText = e && e.code === 'auth/user-not-found'
+            ? 'Користувача з таким email не знайдено.'
+            : 'Не вдалося надіслати лист. Перевір email і спробуй ще раз.';
+        console.error(e);
+    }
 }
 
 window.PlannerSync && window.PlannerSync.onAuthChange((user) => {

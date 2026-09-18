@@ -1,7 +1,5 @@
 // Обгортка над Firebase (Auth + Firestore) для синхронізації даних
-// між Mac-застосунком та iPhone PWA. Той самий Firebase-проєкт, що й
-// у "Навантаженні", але окрема колекція Firestore ("personalhub"),
-// щоб дані двох застосунків не перетиналися.
+// між Mac-застосунком "Навантаження" та цим iPhone PWA.
 
 (function () {
     const firebaseApp = firebase.initializeApp(window.FIREBASE_CONFIG);
@@ -13,7 +11,7 @@
     });
 
     function docRef(uid) {
-        return db.collection('personalhub').doc(uid);
+        return db.collection('planners').doc(uid);
     }
 
     window.PlannerSync = {
