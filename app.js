@@ -137,8 +137,9 @@ function flashSaveIndicator() {
     setTimeout(() => el.classList.remove('show'), 1200);
 }
 
-// --- 4. ПІДРАХУНОК ГОДИН ---
-function getDoneHours(groupId, type) {
+// --- 4. ПІДРАХУНОК ЗАНЯТЬ (пар) ---
+// Кожна пара = 2 год., тому кількість проведених пар = кількість подій цього типу в минулому.
+function getDoneCount(groupId, type) {
     const todayStr = new Date().toISOString().split('T')[0];
     const pastGroupEvents = calendarEvents.filter(event => {
         if (!event.title) return false;
@@ -150,7 +151,7 @@ function getDoneHours(groupId, type) {
         if (type === 'prac' && event.title.toLowerCase().includes('практична')) matchesType = true;
         return isPast && matchesGroup && matchesType;
     });
-    return pastGroupEvents.length * 2;
+    return pastGroupEvents.length;
 }
 
 function escapeHtml(str) {
@@ -166,13 +167,15 @@ function renderDashboard() {
     let grandTotalHours = 0, grandDoneHours = 0;
 
     subjectsConfig.forEach(subject => {
+        const lecTotalCount = subject.lecTotal / 2;
+        const pracTotalCount = subject.pracTotal / 2;
         grandTotalHours += (subject.lecTotal + subject.pracTotal);
-        const lecDone = getDoneHours(subject.id, 'lec');
-        const pracDone = getDoneHours(subject.id, 'prac');
-        grandDoneHours += (lecDone + pracDone);
+        const lecDoneCount = getDoneCount(subject.id, 'lec');
+        const pracDoneCount = getDoneCount(subject.id, 'prac');
+        grandDoneHours += (lecDoneCount * 2 + pracDoneCount * 2);
 
-        const lecPercent = subject.lecTotal > 0 ? Math.round((lecDone / subject.lecTotal) * 100) : 0;
-        const pracPercent = subject.pracTotal > 0 ? Math.round((pracDone / subject.pracTotal) * 100) : 0;
+        const lecPercent = lecTotalCount > 0 ? Math.round((lecDoneCount / lecTotalCount) * 100) : 0;
+        const pracPercent = pracTotalCount > 0 ? Math.round((pracDoneCount / pracTotalCount) * 100) : 0;
 
         const itemNotes = subjectNotes[subject.id] || { link: '', text: '' };
         const btnClass = itemNotes.text || itemNotes.link ? 'apple-pill-btn has-notes' : 'apple-pill-btn';
@@ -186,11 +189,11 @@ function renderDashboard() {
                 <span class="badge-apple">${escapeHtml(subject.term)}</span>
             </div>
             <div class="progress-wrap">
-                <div class="progress-header"><span>Лекції</span><span style="color: var(--text-sec)">${lecDone} / ${subject.lecTotal} год</span></div>
+                <div class="progress-header"><span>Лекції</span><span style="color: var(--text-sec)">${lecDoneCount} / ${lecTotalCount}</span></div>
                 <div class="progress-track"><div class="progress-fill${lecPercent > 100 ? ' over' : ''}" style="width: ${Math.min(lecPercent, 100)}%"></div></div>
             </div>
             <div class="progress-wrap">
-                <div class="progress-header"><span>Практичні</span><span style="color: var(--text-sec)">${pracDone} / ${subject.pracTotal} год</span></div>
+                <div class="progress-header"><span>Практичні</span><span style="color: var(--text-sec)">${pracDoneCount} / ${pracTotalCount}</span></div>
                 <div class="progress-track"><div class="progress-fill prac${pracPercent > 100 ? ' over' : ''}" style="width: ${Math.min(pracPercent, 100)}%"></div></div>
             </div>
             <button class="${btnClass}" onclick="openNotesModal('${subject.id}')">Матеріали та Студенти</button>
