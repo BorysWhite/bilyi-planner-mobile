@@ -1,58 +1,34 @@
-const CACHE_NAME = 'bilyi-planner-v2';
-const APP_SHELL = [
-    './',
-    './index.html',
-    './app.js',
-    './sync.js',
-    './firebase-config.js',
-    './manifest.webmanifest',
-    './vendor/bootstrap.min.css',
-    './vendor/bootstrap.bundle.min.js',
-    './vendor/fullcalendar.min.js',
-    './vendor/firebase-app-compat.js',
-    './vendor/firebase-auth-compat.js',
-    './vendor/firebase-firestore-compat.js',
-    './assets/app-icon-192.png',
-    './assets/app-icon-512.png',
-    './assets/knuba-logo.png'
+// Кеш програми для роботи без інтернету. Спершу мережа (щоб оновлення доходили одразу),
+// без мережі — з кешу. Номер версії змінюється при кожній збірці.
+const VERSION = 'sufler-20260925165230';
+const FILES = [
+    './', 'index.html', 'prompter.html', 'styles.css', 'prompter.css',
+    'renderer.js', 'prompter.js', 'voice-tracker.js', 'sync-core.js', 'pwa-api.js',
+    'web-voice.js', 'syl-worklet.js', 'recorder.js', 'defaults.js', 'firebase-config.js',
+    'vendor/firebase-app-compat.js', 'vendor/firebase-auth-compat.js', 'vendor/firebase-firestore-compat.js',
+    'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'
 ];
 
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
-    );
-    self.skipWaiting();
+self.addEventListener('install', e => {
+    e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
 
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys()
-            .then((keys) =>
-                Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-            )
-            .then(() => self.clients.claim())
-    );
+self.addEventListener('activate', e => {
+    e.waitUntil(caches.keys()
+        .then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k))))
+        .then(() => self.clients.claim()));
 });
 
-// Стратегія "мережа спочатку": застосунок завжди тягне свіжу версію файлів,
-// поки є інтернет, і кладе її в кеш. Кеш використовується лише як резерв,
-// коли мережі немає (офлайн-режим), — так, щоб оновлення (наприклад, нові
-// дисципліни чи групи) з'являлись на телефоні одразу, а не залипали
-// назавжди у старому кеші, як було раніше.
-// Дані (Firestore) тут не кешуються — про офлайн-роботу з даними піклується
-// власна offline-persistence Firestore.
-self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') return;
-    const url = new URL(event.request.url);
-    if (url.origin !== self.location.origin) return; // не чіпаємо Firebase/Google запити
-
-    event.respondWith(
-        fetch(event.request).then((response) => {
-            if (response && response.status === 200) {
-                const clone = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-            }
-            return response;
-        }).catch(() => caches.match(event.request))
+self.addEventListener('fetch', e => {
+    const url = new URL(e.request.url);
+    if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+    e.respondWith(
+        fetch(e.request)
+            .then(res => {
+                const copy = res.clone();
+                caches.open(VERSION).then(c => c.put(e.request, copy));
+                return res;
+            })
+            .catch(() => caches.match(e.request, { ignoreSearch: true }))
     );
 });

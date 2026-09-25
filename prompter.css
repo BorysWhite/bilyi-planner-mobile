@@ -1,0 +1,265 @@
+:root {
+    --text: #f5f5f0;
+    --bg: #000;
+    --hl: #ffd84d;
+    --fs: 44px;
+    --lh: 1.45;
+    --col: 38%;
+    --eye: 120px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    cursor: default;
+    user-select: none;
+}
+body.idle { cursor: none; }
+
+.hidden { display: none !important; }
+
+/* Смужка для перетягування вікна без рамки */
+.drag {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 18px;
+    -webkit-app-region: drag;
+    z-index: 5;
+}
+
+.progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 4; }
+#progress-fill { height: 100%; width: 0; background: var(--hl); opacity: .55; }
+
+.viewport { position: absolute; inset: 0; overflow: hidden; }
+.mirror-box { width: 100%; height: 100%; }
+body.mirror .mirror-box { transform: scaleX(-1); }
+
+.content {
+    position: relative;
+    width: var(--col);
+    min-width: 260px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-top: var(--eye);
+    font-size: var(--fs);
+    line-height: var(--lh);
+    font-weight: 600;
+    text-align: left;
+    will-change: transform;
+    overflow-wrap: break-word;
+}
+.content p { margin: 0 0 calc(var(--fs) * 0.6); }
+.content .w { transition: color .18s, opacity .18s; }
+body.dim .content .w { opacity: .38; }
+.content .w.cur { color: var(--hl); opacity: 1 !important; }
+
+/* Позначка лінії погляду зліва */
+.eye {
+    position: absolute;
+    left: 0;
+    width: 0; height: 0;
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+    border-left: 12px solid var(--hl);
+    opacity: .6;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.countdown {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30vh;
+    font-weight: 800;
+    color: var(--hl);
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    z-index: 6;
+}
+
+.paused-badge {
+    position: fixed;
+    top: 12px; right: 14px;
+    font: 600 12px/1 -apple-system, sans-serif;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: rgba(128, 128, 128, .25);
+    color: var(--text);
+    opacity: .8;
+    z-index: 3;
+    transition: opacity .3s;
+}
+body.playing .paused-badge { opacity: 0; }
+
+/* Панель керування: з’являється, коли рухаєте мишею */
+.bar {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    border-radius: 12px;
+    background: rgba(28, 29, 34, .92);
+    border: 1px solid rgba(255, 255, 255, .08);
+    color: #e8e8ea;
+    font: 13px/1 -apple-system, sans-serif;
+    z-index: 7;
+    transition: opacity .25s;
+    white-space: nowrap;
+}
+body.idle .bar { opacity: 0; pointer-events: none; }
+.bar button {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-size: 15px;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.bar button:hover { background: rgba(255, 255, 255, .1); }
+.bar .val { padding: 0 6px; font-variant-numeric: tabular-nums; color: #cfd0d4; }
+.bar .time { color: #9a9ca5; }
+.bar .sep { width: 1px; height: 18px; background: rgba(255, 255, 255, .12); margin: 0 4px; }
+
+.help {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .8);
+    color: #eee;
+    font: 15px/1.4 -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 8;
+}
+.help dl { display: grid; grid-template-columns: auto auto; gap: 6px 18px; margin: 8px 0 14px; }
+.help dt { font-weight: 700; text-align: right; color: #ffd84d; }
+.help dd { margin: 0; }
+.help p { color: #999; font-size: 13px; }
+
+/* Індикатор мікрофона */
+.mic {
+    position: fixed;
+    top: 12px; right: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: rgba(128, 128, 128, .22);
+    color: var(--text);
+    font: 600 12px/1 -apple-system, sans-serif;
+    z-index: 3;
+    opacity: .85;
+}
+.mic .dot { width: 8px; height: 8px; border-radius: 50%; background: #8a8a8a; }
+.mic.speaking .dot { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+.mic .meter { width: 42px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+#mic-level { display: block; height: 100%; background: #4ade80; transform-origin: left; transform: scaleX(0); transition: transform .08s; }
+body.idle .mic { opacity: .35; }
+
+.voice-error {
+    position: fixed;
+    left: 50%; top: 40px;
+    transform: translateX(-50%);
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #3a1d1d;
+    color: #ffd0d0;
+    font: 14px/1.4 -apple-system, sans-serif;
+    z-index: 9;
+}
+.bar .mode { font-size: 13px; padding: 0 8px; }
+
+body.platform-web .mac-only { display: none; }
+
+/* Камера й запис */
+.cam {
+    position: fixed;
+    right: 14px;
+    bottom: 70px;
+    width: 22vw;
+    min-width: 120px;
+    max-width: 260px;
+    border-radius: 12px;
+    transform: scaleX(-1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .5);
+    z-index: 6;
+    opacity: .9;
+}
+.rec {
+    position: fixed;
+    top: 12px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, .55);
+    color: #fff;
+    font: 600 13px/1 -apple-system, sans-serif;
+    font-variant-numeric: tabular-nums;
+    z-index: 6;
+}
+.rec-dot { width: 9px; height: 9px; border-radius: 50%; background: #888; }
+.rec.on .rec-dot { background: #ff3b30; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: .3; } }
+.bar button.rec-armed { color: #ff3b30; }
+
+.saved {
+    position: fixed;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(420px, 90vw);
+    padding: 20px;
+    border-radius: 14px;
+    background: #1c1d22;
+    color: #eee;
+    font: 15px/1.4 -apple-system, sans-serif;
+    text-align: center;
+    z-index: 9;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .6);
+}
+.saved-actions { display: flex; gap: 10px; justify-content: center; margin-top: 12px; }
+.sbtn { border: none; border-radius: 9px; padding: 10px 16px; font: 600 15px -apple-system, sans-serif; background: #ffd84d; color: #1a1400; }
+.sbtn.ghost { background: #2a2c33; color: #ddd; }
+
+/* Телефон: безпечні зони й вузька панель */
+@media (max-width: 760px) {
+    .drag { display: none; }
+    .bar {
+        left: 8px; right: 8px;
+        transform: none;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        flex-wrap: wrap;
+        justify-content: center;
+        row-gap: 2px;
+    }
+    .bar .sep { display: none; }
+    .bar button { min-width: 42px; height: 42px; font-size: 18px; }
+    .bar #b-play { min-width: 56px; font-size: 22px; background: rgba(255, 216, 77, .18); }
+    /* На телефоні панель не зникає: під час читання лише напівпрозора, але кнопки працюють */
+    body.idle .bar { opacity: .35; pointer-events: auto; }
+    .paused-badge, .mic { top: calc(8px + env(safe-area-inset-top)); }
+    .rec { top: calc(8px + env(safe-area-inset-top)); }
+    .cam { bottom: calc(64px + env(safe-area-inset-bottom)); width: 30vw; }
+    .eye { display: none; }
+}
+
+.voice-error.hint { background: rgba(40, 42, 50, .95); color: #fff; }
